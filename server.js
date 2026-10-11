@@ -27,11 +27,15 @@ connectDB();
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow same-origin/proxied requests and the configured client origin
-    if (!origin || process.env.CLIENT_URL?.split(',').includes(origin)) {
+    const allowedOrigins = (process.env.CLIENT_URL || '')
+      .split(',')
+      .map((url) => url.trim())
+      .filter(Boolean);
+
+    if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    callback(null, true); // permissive for dev; tighten for production if needed
+    callback(null, false);
   },
   credentials: true,
 }));
